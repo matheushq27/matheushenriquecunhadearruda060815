@@ -1,4 +1,5 @@
 import { AppError } from '@/helpers/AppError';
+import { useAuthStore } from '@/stores/auth.store';
 import axios from 'axios';
 
 const api = axios.create({
@@ -8,14 +9,15 @@ const api = axios.create({
 api.interceptors.request.use(
     function (config) {
 
-        if (!config.headers.Authorization) {
-            config.headers.Authorization = ``;
-            config.headers.Authorization = `Bearer `;
+        const token = useAuthStore.getState().user?.accessToken;
+
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`
         }
 
-        return config;
+        return config
     },
-    function (error) {
+    function () {
         return Promise.reject(
             new AppError("Falha na requisição")
         );
