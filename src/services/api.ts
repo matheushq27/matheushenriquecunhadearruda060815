@@ -22,6 +22,13 @@ api.interceptors.request.use(
     }
 );
 
+const getErrorMessageByStatus = (status: number) => {
+    if (status === 401) {
+        return "Não autorizado";
+    }
+
+    return "Falha na requisição";
+}
 
 api.interceptors.response.use(
     function (response) {
@@ -40,7 +47,7 @@ api.interceptors.response.use(
         }
 
         return Promise.reject(
-            new AppError("Falha na requisição")
+            new AppError(getErrorMessageByStatus(error.status))
         );
     }
 );
