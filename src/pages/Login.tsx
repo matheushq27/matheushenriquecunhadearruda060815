@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import { Card } from 'primereact/card';
 import Logo from '@/assets/logo.svg';
 import { FormField } from '@/components/FormField';
-import * as authenticateService from '@/services/authenticate.service';
+import * as authenticateService from '@/services/authenticate/authenticate.service';
 import { useAuthStore } from '@/stores/auth.store';
 import { useErrorHandler } from '@/hooks/useHandleError';
 
