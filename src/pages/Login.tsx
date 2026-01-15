@@ -4,7 +4,7 @@ import { Password } from 'primereact/password';
 import { InputText } from 'primereact/inputtext';
 import { Card } from 'primereact/card';
 import Logo from '@/assets/logo.svg';
-import FormField from '@/components/FormField';
+import { FormField } from '@/components/FormField';
 
 const Login = () => {
     const [password, setPassword] = useState('');
