@@ -1,16 +1,8 @@
+import type { AuthState } from '@/interfaces/stores/auth.store';
 import { create } from 'zustand';
 
-interface AuthState {
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  user: any | null;
-
-  setUser: (user: any) => void;
-  logout: () => void;
-}
-
 export const useAuthStore = create<AuthState>((set) => ({
-  isAuthenticated: true,
+  isAuthenticated: false,
   isLoading: false,
   user: null,
 
