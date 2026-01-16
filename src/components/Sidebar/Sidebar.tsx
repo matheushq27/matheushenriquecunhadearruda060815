@@ -38,7 +38,7 @@ export function Sidebar() {
     ]
 
     return (
-        <aside className="card flex justify-content-center rounded-none" >
+        <aside className="card flex justify-content-center rounded-none hidden lg:block" >
             <Menu model={items} className="w-full md:w-15rem !rounded-none" />
         </aside>
     )
