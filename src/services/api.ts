@@ -2,6 +2,8 @@ import { AppError } from '@/helpers/AppError';
 import { useAuthStore } from '@/stores/auth.store';
 import axios from 'axios';
 
+export const VERSION_API = "v1";
+
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
 });
