@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { FieldError } from 'react-hook-form';
 
 import { twMerge } from 'tailwind-merge';
 
@@ -7,6 +8,8 @@ interface FormFieldProps {
   inputId: string;
   classNameContainer?: string;
   children: ReactNode;
+  errorMessage?: FieldError | undefined;
+  required?: boolean;
 }
 
 const FormField = ({
@@ -14,6 +17,8 @@ const FormField = ({
   inputId,
   classNameContainer,
   children,
+  errorMessage,
+  required = false
 }: FormFieldProps) => {
   return (
     <div
@@ -24,12 +29,16 @@ const FormField = ({
     >
       <label
         htmlFor={inputId}
-        className="block text-900 text-xl font-medium"
+        className="block text-900 text-base font-medium"
       >
         {label}
+        {required && <span className="text-red-500"> *</span>}
       </label>
 
       {children}
+      {errorMessage && errorMessage.message && (
+        <small className="p-error mt-1">{errorMessage.message}</small>
+      )}
     </div>
   );
 };
