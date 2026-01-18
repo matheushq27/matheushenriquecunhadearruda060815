@@ -9,6 +9,14 @@ export interface TutorsRequest {
 
 export interface TutorsResponse extends Pagination<Tutor> {}
 
-export interface CreateTutorProps extends Omit<Tutor, "id" | "pets" | "foto"> {}
+export interface CreateTutorProps {
+    nome: string
+    email: string
+    telefone: string
+    endereco: string
+    cpf: string
+}
+
+export interface CreateTutorResponse extends Omit<Tutor, 'pets'> {}
 
 
