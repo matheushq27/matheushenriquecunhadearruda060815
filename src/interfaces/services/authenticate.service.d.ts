@@ -10,3 +10,5 @@ export interface AuthenticateResponse {
     expire_in: number;
     refresh_expire_in: number;
 }
+
+export interface RefreshTokenResponse extends Omit<AuthenticateResponse, 'username'> {}
