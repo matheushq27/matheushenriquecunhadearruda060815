@@ -5,8 +5,8 @@ export function CardView({ avatar, title, subtitle, content }: { avatar: string,
         <div className="p-4 bg-white shadow-sm rounded-md">
             <div className="flex gap-5">
                 <Avatar image={avatar} size="large" shape="circle" />
-                <div>
-                    <h2 className="font-bold">{title}</h2>
+                <div className="min-w-0">
+                    <h2 className="font-bold break-words">{title}</h2>
                     <p className="text-sm text-gray-500">{subtitle}</p>
                 </div>
             </div>
