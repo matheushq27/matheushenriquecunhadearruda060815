@@ -1,59 +1,112 @@
-import { AppError } from '@/helpers/AppError';
-import { useAuthStore } from '@/stores/auth.store';
-import axios from 'axios';
+import axios from 'axios'
+import { AppError } from '@/helpers/AppError'
+import { useAuthStore } from '@/stores/auth.store'
+import { refreshToken } from './authenticate/authenticate.service'
 
-export const VERSION_API = "v1";
+export const VERSION_API = 'v1'
+
+let isRefreshing = false
+let failedQueue: {
+  resolve: (value?: unknown) => void
+  reject: (reason?: any) => void
+}[] = []
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-});
+  baseURL: import.meta.env.VITE_API_URL,
+})
 
+/* =========================
+   REQUEST INTERCEPTOR
+========================= */
 api.interceptors.request.use(
-    function (config) {
+  (config) => {
+    const token = useAuthStore.getState().user?.accessToken
 
-        const token = useAuthStore.getState().user?.accessToken;
-
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`
-        }
-
-        return config
-    },
-    function () {
-        return Promise.reject(
-            new AppError("Falha na requisição")
-        );
-    }
-);
-
-const getErrorMessageByStatus = (status: number) => {
-    if (status === 401) {
-        return "Não autorizado";
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
     }
 
-    return "Falha na requisição";
-}
+    return config
+  },
+  () =>
+    Promise.reject(
+      new AppError('Falha na requisição')
+    )
+)
 
+/* =========================
+   RESPONSE INTERCEPTOR
+========================= */
 api.interceptors.response.use(
-    function (response) {
-        if (response.data && response.data.access_token) {
-            response.headers['Authorization'] =
-                `Bearer ${response.data.access_token}`;
-        }
+  (response) => response,
 
-        return response;
-    },
-    function (error) {
-        if (error.response.data.message) {
-            return Promise.reject(
-                new AppError(error.response.data.message)
-            );
-        }
+  async (error) => {
+    const originalRequest = error.config
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true
+
+      const {
+        user,
+        setTokens,
+        logout,
+      } = useAuthStore.getState()
+
+      if (!user?.refreshToken) {
+        logout()
+        return Promise.reject(
+          new AppError('Sessão expirada')
+        )
+      }
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject })
+        })
+          .then(() => api(originalRequest))
+          .catch(Promise.reject)
+      }
+
+      try {
+        const resp = await refreshToken({ refreshToken: user.refreshToken })
+        setTokens(
+          resp.accessToken,
+          resp.refreshToken,
+          resp.expiresIn,
+          resp.refreshExpiresIn,
+        )
+
+        failedQueue.forEach((p) => p.resolve())
+        failedQueue = []
+
+        return api(originalRequest)
+      } catch (err) {
+        console.log(err)
+        failedQueue.forEach((p) => p.reject(err))
+        failedQueue = []
+
+        logout()
 
         return Promise.reject(
-            new AppError(getErrorMessageByStatus(error.status))
-        );
+          new AppError('Sessão expirada')
+        )
+      } finally {
+        isRefreshing = false
+      }
     }
-);
 
-export default api;
+    if (error.response?.data?.message) {
+      return Promise.reject(
+        new AppError(error.response.data.message)
+      )
+    }
+
+    return Promise.reject(
+      new AppError('Falha na requisição')
+    )
+  }
+)
+
+export default api
