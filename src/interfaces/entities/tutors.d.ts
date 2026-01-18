@@ -5,7 +5,7 @@ export interface Tutor {
   telefone: string
   endereco: string
   cpf: number
-  foto: Foto
+  foto: Foto | null
   pets?: Pet[]
 }
 
