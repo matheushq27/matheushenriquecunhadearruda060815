@@ -5,6 +5,7 @@ import Login from "@/pages/Login";
 import Home from '@/pages/Home';
 import { AuthLayout } from '@/layouts/AuthLayout'
 import { GuestLayout } from '@/layouts/GuestLayout'
+import Tutors from '@/pages/Tutors';
 
 export default function AppRoutes() {
     return (
@@ -20,6 +21,7 @@ export default function AppRoutes() {
             <Route element={<PrivateRoutes />}>
                 <Route element={<AuthLayout />}>
                     <Route path="/" element={<Home />} />
+                    <Route path="/tutors" element={<Tutors />} />
                 </Route>
             </Route>
         </Routes>
