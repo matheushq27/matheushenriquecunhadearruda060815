@@ -1,18 +1,27 @@
 import { Avatar } from "primereact/avatar"
-import { useRef, useState } from "react"
+import { useRef, useState, useEffect } from "react"
 import { Button } from "primereact/button"
 
 interface AvatarEditProps {
-    onImageUpload?: (file: File) => void
+    onImageUpload?: (file: File | null) => void
     currentImageUrl?: string
     size?: "large" | "xlarge" | "normal"
+    loading?: boolean
 }
 
-export default function AvatarEdit({ onImageUpload, currentImageUrl, size = "xlarge" }: AvatarEditProps) {
+export default function AvatarEdit({ onImageUpload, currentImageUrl, size = "xlarge", loading = false }: AvatarEditProps) {
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null)
 
+    useEffect(() => {
+        setPreviewUrl(currentImageUrl || null)
+    }, [currentImageUrl])
+
     const handleClick = () => {
+        console.log(currentImageUrl)
+        if(currentImageUrl){
+            return
+        }
         fileInputRef.current?.click()
     }
 
@@ -37,6 +46,10 @@ export default function AvatarEdit({ onImageUpload, currentImageUrl, size = "xla
         if (fileInputRef.current) {
             fileInputRef.current.value = ""
         }
+
+        if (onImageUpload) {
+            onImageUpload(null)
+        }
     }
 
     return (
@@ -45,7 +58,8 @@ export default function AvatarEdit({ onImageUpload, currentImageUrl, size = "xla
                 <div className="relative cursor-pointer" onClick={handleClick}>
                     <Avatar
                         shape="circle"
-                        className="p-overlay-badge border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors"
+                        className={`p-overlay-badge border-2 border-gray-300 ${!currentImageUrl ? "border-dashed hover:border-gray-400 transition-colors" : ""}`}
+
                         icon={previewUrl ? undefined : "pi pi-user"}
                         size={size}
                         image={previewUrl || undefined}
@@ -75,6 +89,7 @@ export default function AvatarEdit({ onImageUpload, currentImageUrl, size = "xla
                         aria-label="Remover imagem"
                         text
                         size="small"
+                        loading={loading}
                     />
                 </div>
             )}
