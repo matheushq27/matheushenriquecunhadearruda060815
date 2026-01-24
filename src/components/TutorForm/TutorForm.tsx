@@ -5,21 +5,25 @@ import { FormField } from '../FormField'
 import { InputMask } from 'primereact/inputmask';
 import type { CreateTutorProps } from '@/interfaces/services/tutors.service';
 import { validateCPF } from '@/helpers/Validators';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DialogForm } from "@/components/DialogForm";
 import * as tutorsService from "@/services/tutors/tutors.service";
 import { useErrorHandler } from "@/hooks/useHandleError";
 import { keepOnlyNumbers } from '@/helpers/Formatters';
 import { useToast } from '@/contexts/ToastContext';
+import { useTutorsStore } from "@/stores/tutors.store";
+import { AvatarEdit } from '../AvatarEdit';
 
 export interface CreateTutorFormData extends CreateTutorProps { }
 
 export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
 
-    const {showSuccess} = useToast();
+    const { showSuccess } = useToast();
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadingCreateTutor, setLoadingCreateTutor] = useState(false);
     const { handleError } = useErrorHandler();
+    const { currentTutor, setCurrentTutor } = useTutorsStore((state) => state);
+    const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
 
     const {
         control,
@@ -40,7 +44,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
         setLoadingCreateTutor(true);
         try {
             const response = await tutorsService.createTutor(data);
-            if(afterCreating){
+            if (afterCreating) {
                 afterCreating();
             }
             reset({
@@ -60,11 +64,60 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
         }
     }
 
+    const getTutor = async (id: number) => {
+        try {
+            const response = await tutorsService.getTutor(id);
+            console.log(response);
+            setCurrentImageUrl(response.foto?.url || "");
+            console.log(response.foto)
+            reset({
+                nome: response.nome,
+                email: response.email,
+                telefone: response.telefone,
+                endereco: response.endereco,
+                cpf: response.cpf ? response.cpf.toString() : '',
+            })
+        } catch (error) {
+            console.log(error);
+            handleError(error);
+        }
+    }
+
+    const updateTutorPhoto = async (photo: File) => {
+        if (!currentTutor) {
+            return handleError({}, 'Erro ao atualizar foto do tutor');
+        }
+        try {
+            await tutorsService.updateTutorPhoto(currentTutor.id, photo);
+            showSuccess('Foto do tutor atualizada com sucesso');
+        } catch (error) {
+            handleError(error, 'Erro ao atualizar foto do tutor');
+        }
+    }
+
     const handleSubmitForm = async (data: CreateTutorFormData) => {
         data.cpf = keepOnlyNumbers(data.cpf);
         data.telefone = keepOnlyNumbers(data.telefone);
         await createTutor(data);
     }
+
+    const onImageUpload = (photo: File) => {
+        updateTutorPhoto(photo);
+    }
+
+    useEffect(() => {
+        if (!dialogVisible) {
+            setCurrentTutor(null);
+        }
+    }, [dialogVisible]);
+
+    useEffect(() => {
+        if (currentTutor) {
+            setDialogVisible(true);
+            console.log(currentTutor)
+            getTutor(currentTutor.id);
+        }
+    }, [currentTutor]);
 
     return (
         <>
@@ -79,6 +132,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                     className="flex flex-col gap-4"
                 >
                     <div className='h-96 xl:h-auto overflow-y-auto'>
+                        <AvatarEdit currentImageUrl={currentImageUrl} onImageUpload={onImageUpload} />
                         {/* NOME */}
                         <div className="flex flex-col gap-1 mt-5 mb-3">
                             <FormField label="Nome" inputId="nome" errorMessage={errors.nome} required>
