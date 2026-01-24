@@ -10,12 +10,20 @@ import { maskCPF, maskPhone } from "@/helpers/Masks";
 import { SectionLoading } from "@/components/SectionLoading";
 import { Paginator } from 'primereact/paginator';
 import { usePagination } from "@/hooks/usePagination";
+import { confirmDialog } from 'primereact/confirmdialog';
+import { useErrorHandler } from "@/hooks/useHandleError";
+import { useToast } from "@/contexts/ToastContext";
+import { NoRecordsFound } from "@/components/NoRecordsFound";
+import type { Tutor } from "@/interfaces/entities/tutors";
 
 export default function Tutors() {
 
+    const { showSuccess } = useToast();
+    const { handleError } = useErrorHandler();
     const [name, setName] = useState('');
+    const [indexDelete, setIndexDelete] = useState<number | null>(null);
     const [loadingTutors, setLoadingTutors] = useState(true);
-    const { tutors } = useTutorsStore((state) => state);
+    const { tutors, setCurrentTutor } = useTutorsStore((state) => state);
     const { onPageChange, perPageOptions, setPagination, nextPage, total, setNextPage, first, size } = usePagination()
 
     const getTutors = async () => {
@@ -45,6 +53,50 @@ export default function Tutors() {
         }
     }
 
+    const confirmDelete = (index: number) => {
+        const tutor = tutors[index];
+
+        if (!tutor) {
+            return
+        }
+
+        confirmDialog({
+            message: `Tem certeza que deseja excluir ${tutor.nome}?`,
+            header: 'Zona de perigo',
+            icon: 'pi pi-exclamation-triangle',
+            defaultFocus: 'accept',
+            acceptLabel: 'Excluir',
+            rejectLabel: 'Cancelar',
+            accept: () => handleDeleteTutor(index),
+            reject: () => setIndexDelete(null),
+        });
+    };
+
+    const deleteTutor = async (id: number) => {
+        try {
+            await tutorsService.deleteTutor(id);
+            getTutors()
+            showSuccess('Tutor excluído com sucesso');
+        } catch (error) {
+            handleError(error, 'Erro ao excluir tutor');
+        } finally {
+            setIndexDelete(null);
+        }
+    }
+
+    const handleDeleteTutor = (index: number) => {
+        if (!tutors[index].id) {
+            return handleError({}, 'Erro ao excluir tutor');
+        }
+        setIndexDelete(index);
+        deleteTutor(tutors[index].id);
+    }
+
+    const handleEditTutor = (currentTutor: Tutor) => {
+        setCurrentTutor(currentTutor)
+        console.log('currentTutor', currentTutor)
+    }
+
     const handleFilter = () => {
         setNextPage((prev) => {
             if (prev === 0) {
@@ -72,17 +124,30 @@ export default function Tutors() {
             </div>
             <SectionLoading loading={loadingTutors} />
             {!loadingTutors && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {tutors.map((tutor) => (
-                        <CardView key={tutor.id} avatar={tutor.foto?.url} title={tutor.nome} subtitle={tutor.email} content={
-                            <div>
-                                <p className="text-sm text-gray-500">CPF: {maskCPF(tutor.cpf)}</p>
-                                <p className="text-sm text-gray-500">Endereço: {tutor.endereco}</p>
-                                <p className="text-sm text-gray-500">Telefone: {maskPhone(tutor.telefone)}</p>
-                            </div>
-                        } />
-                    ))}
-                </div>
+                tutors.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {tutors.map((tutor, index) => (
+                            <CardView
+                                onEdit={() => handleEditTutor(tutor)}
+                                onDelete={() => confirmDelete(index)}
+                                loadingDelete={indexDelete === index}
+                                key={tutor.id}
+                                avatar={tutor.foto?.url}
+                                title={tutor.nome}
+                                subtitle={tutor.email}
+                                content={
+                                    <div>
+                                        <p className="text-sm text-gray-500">CPF: {maskCPF(tutor.cpf)}</p>
+                                        <p className="text-sm text-gray-500">Endereço: {tutor.endereco}</p>
+                                        <p className="text-sm text-gray-500">Telefone: {maskPhone(tutor.telefone)}</p>
+                                    </div>
+                                }
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <NoRecordsFound />
+                )
             )}
             <div className="card">
                 <Paginator className="mt-4" first={first} rows={size} totalRecords={total} rowsPerPageOptions={perPageOptions} onPageChange={onPageChange} />
