@@ -26,7 +26,7 @@ export function CardView({ avatar, title, subtitle, content, onEdit, onDelete, l
         <div className="bg-white shadow-sm rounded-md flex flex-col justify-between">
             <div className="p-4">
                 <div className="flex gap-5">
-                    <Avatar image={avatar} size="large" shape="circle" />
+                    <Avatar icon="pi pi-user" image={avatar} size="large" shape="circle" />
                     <div className="min-w-0">
                         <h2 className="font-bold break-words">{title}</h2>
                         <p className="text-sm text-gray-500">{subtitle}</p>
