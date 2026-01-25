@@ -21,8 +21,9 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
     const { showSuccess } = useToast();
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadingCreateTutor, setLoadingCreateTutor] = useState(false);
+    const [loadingRemoveTutorPhoto, setLoadingRemoveTutorPhoto] = useState(false);
     const { handleError } = useErrorHandler();
-    const { currentTutor, setCurrentTutor } = useTutorsStore((state) => state);
+    const { currentTutor, setCurrentTutor, updateTutorPhoto: updateTutorPhotoStore } = useTutorsStore((state) => state);
     const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
 
     const {
@@ -87,11 +88,31 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
         if (!currentTutor) {
             return handleError({}, 'Erro ao atualizar foto do tutor');
         }
+
         try {
-            await tutorsService.updateTutorPhoto(currentTutor.id, photo);
+            const resp = await tutorsService.updateTutorPhoto(currentTutor.id, photo);
+            updateTutorPhotoStore(currentTutor.id, resp);
             showSuccess('Foto do tutor atualizada com sucesso');
         } catch (error) {
             handleError(error, 'Erro ao atualizar foto do tutor');
+        }
+    }
+
+    const removeTutorPhoto = async () => {
+        if (!currentTutor) {
+            return handleError({}, 'Erro ao remover foto do tutor');
+        }
+        setLoadingRemoveTutorPhoto(true);
+        console.log(currentTutor.foto?.id)
+        try {
+            await tutorsService.removeTutorPhoto({ tutorId: currentTutor.id, photoId: currentTutor.foto?.id || 0 });
+            setCurrentImageUrl("");
+            showSuccess('Foto removida com sucesso');
+            updateTutorPhotoStore(currentTutor.id, null);
+        } catch (error) {
+            handleError(error, 'Erro ao remover foto do tutor');
+        } finally {
+            setLoadingRemoveTutorPhoto(false);
         }
     }
 
@@ -101,13 +122,18 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
         await createTutor(data);
     }
 
-    const onImageUpload = (photo: File) => {
-        updateTutorPhoto(photo);
+    const onImageUpload = (photo: File | null) => {
+        if (photo) {
+            updateTutorPhoto(photo);
+        } else {
+            removeTutorPhoto()
+        }
     }
 
     useEffect(() => {
         if (!dialogVisible) {
             setCurrentTutor(null);
+            setCurrentImageUrl("");
         }
     }, [dialogVisible]);
 
@@ -116,6 +142,8 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
             setDialogVisible(true);
             console.log(currentTutor)
             getTutor(currentTutor.id);
+        } else {
+            setCurrentImageUrl("");
         }
     }, [currentTutor]);
 
@@ -132,7 +160,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                     className="flex flex-col gap-4"
                 >
                     <div className='h-96 xl:h-auto overflow-y-auto'>
-                        <AvatarEdit currentImageUrl={currentImageUrl} onImageUpload={onImageUpload} />
+                        <AvatarEdit currentImageUrl={currentImageUrl} onImageUpload={onImageUpload} loading={loadingRemoveTutorPhoto} />
                         {/* NOME */}
                         <div className="flex flex-col gap-1 mt-5 mb-3">
                             <FormField label="Nome" inputId="nome" errorMessage={errors.nome} required>
