@@ -45,3 +45,7 @@ export async function removeTutorPhoto({ photoId, tutorId }: { tutorId: number, 
 export async function deleteTutor(id: number) {
     return await api.delete(`${URL_TUTORS}/${id}`);
 }
+
+export async function linkingTutorToPet({ tutorId, petId }: { tutorId: number, petId: number }) {
+    return await api.post(`${URL_TUTORS}/${tutorId}/pets/${petId}`);
+}
