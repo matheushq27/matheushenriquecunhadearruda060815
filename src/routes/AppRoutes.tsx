@@ -6,6 +6,7 @@ import { AuthLayout } from '@/layouts/AuthLayout'
 import { GuestLayout } from '@/layouts/GuestLayout'
 import Tutors from '@/pages/Tutors';
 import { NotFound } from '@/pages/NotFound';
+import Pets from '@/pages/Pets';
 
 export default function AppRoutes() {
     return (
@@ -21,6 +22,7 @@ export default function AppRoutes() {
             <Route element={<PrivateRoutes />}>
                 <Route element={<AuthLayout />}>
                     <Route path="/tutors" element={<Tutors />} />
+                    <Route path="/pets" element={<Pets />} />
                     {/* 404 */}
                     <Route path="*" element={<NotFound />} />
                 </Route>

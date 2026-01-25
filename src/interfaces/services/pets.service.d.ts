@@ -1,4 +1,5 @@
 import type { Pet } from "../entities/pets";
+import type { Pagination } from "../utils/Pagination";
 
 export interface PetsRequest {
     name: string;
