@@ -26,7 +26,8 @@ export async function getTutor(id: number) {
 }
 
 export async function updateTutor(id: number, tutor: CreateTutorProps) {
-    return await api.put(`${URL_TUTORS}/${id}`, tutor);
+    const response = await api.put(`${URL_TUTORS}/${id}`, tutor);
+    return response.data as Tutor;
 }
 
 export async function updateTutorPhoto(id: number, photo: File) {

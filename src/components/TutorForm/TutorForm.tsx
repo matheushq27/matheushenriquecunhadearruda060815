@@ -24,6 +24,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
     const [loadingCreateTutor, setLoadingCreateTutor] = useState(false);
     const [loadingRemoveTutorPhoto, setLoadingRemoveTutorPhoto] = useState(false);
     const [loadingGetTutor, setLoadingGetTutor] = useState(false);
+    const [loadingUpdateTutor, setLoadingUpdateTutor] = useState(false);
     const { handleError } = useErrorHandler();
     const { currentTutor, setCurrentTutor, updateTutorPhoto: updateTutorPhotoStore } = useTutorsStore((state) => state);
     const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
@@ -43,6 +44,16 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
         },
     })
 
+    const resetValues = () => {
+        reset({
+            nome: '',
+            email: '',
+            telefone: '',
+            endereco: '',
+            cpf: '',
+        })
+    }
+
     const createTutor = async (data: CreateTutorFormData) => {
         setLoadingCreateTutor(true);
         try {
@@ -50,16 +61,9 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
             if (afterCreating) {
                 afterCreating();
             }
-            reset({
-                nome: '',
-                email: '',
-                telefone: '',
-                endereco: '',
-                cpf: '',
-            })
+            resetValues()
             setDialogVisible(false);
             showSuccess('Tutor adicionado com sucesso!');
-            console.log(response);
         } catch (error) {
             handleError(error);
         } finally {
@@ -67,13 +71,32 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
         }
     }
 
+    const updateTutor = async (data: CreateTutorFormData) => {
+        if (!currentTutor) {
+            return handleError({}, 'Erro ao atualizar tutor');
+        }
+
+        setLoadingUpdateTutor(true);
+        try {
+            const response = await tutorsService.updateTutor(currentTutor.id, data);
+            if (afterCreating) {
+                afterCreating();
+            }
+            showSuccess('Tutor atualizado com sucesso!');
+            setDialogVisible(false);
+            setCurrentTutor(null);
+        } catch (error) {
+            handleError(error, 'Erro ao atualizar tutor');
+        } finally {
+            setLoadingUpdateTutor(false);
+        }
+    }
+
     const getTutor = async (id: number) => {
         setLoadingGetTutor(true);
         try {
             const response = await tutorsService.getTutor(id);
-            console.log(response);
             setCurrentImageUrl(response.foto?.url || "");
-            console.log(response.foto)
             reset({
                 nome: response.nome,
                 email: response.email,
@@ -124,7 +147,12 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
     const handleSubmitForm = async (data: CreateTutorFormData) => {
         data.cpf = keepOnlyNumbers(data.cpf);
         data.telefone = keepOnlyNumbers(data.telefone);
-        await createTutor(data);
+
+        if (currentTutor) {
+            await updateTutor(data);
+        } else {
+            await createTutor(data);
+        }
     }
 
     const onImageUpload = (photo: File | null) => {
@@ -139,13 +167,13 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
         if (!dialogVisible) {
             setCurrentTutor(null);
             setCurrentImageUrl("");
+            resetValues();
         }
     }, [dialogVisible]);
 
     useEffect(() => {
         if (currentTutor) {
             setDialogVisible(true);
-            console.log(currentTutor)
             getTutor(currentTutor.id);
         } else {
             setCurrentImageUrl("");
@@ -158,7 +186,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
             <DialogForm
                 isOpen={dialogVisible}
                 onClose={() => setDialogVisible(false)}
-                title="Adicionar Tutor"
+                title={currentTutor ? "Editar Tutor" : "Adicionar Tutor"}
             >
                 <form
                     onSubmit={handleSubmit(handleSubmitForm)}
@@ -293,8 +321,8 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                     {/* BOTÃO */}
                     <Button
                         type="submit"
-                        label="Salvar Tutor"
-                        loading={loadingCreateTutor}
+                        label={currentTutor ? "Atualizar Tutor" : "Salvar Tutor"}
+                        loading={loadingCreateTutor || loadingUpdateTutor}
                         disabled={loadingGetTutor}
                     />
                 </form >
