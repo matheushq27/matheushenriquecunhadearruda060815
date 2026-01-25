@@ -1,5 +1,6 @@
 import type { CreateTutorProps, CreateTutorResponse, TutorsRequest, TutorsResponse } from "@/interfaces/services/tutors.service";
 import api, { VERSION_API } from "../api";
+import type { Photo, Tutor } from "@/interfaces/entities/tutors";
 
 const URL_TUTORS = `${VERSION_API}/tutores`
 
@@ -17,4 +18,29 @@ export async function getTutors({ name, page, size = 10 }: TutorsRequest) {
 export async function createTutor(tutor: CreateTutorProps) {
     const response = await api.post(URL_TUTORS, tutor);
     return response.data as CreateTutorResponse;
+}
+
+export async function getTutor(id: number) {
+    const response = await api.get(`${URL_TUTORS}/${id}`);
+    return response.data as Tutor;
+}
+
+export async function updateTutor(id: number, tutor: CreateTutorProps) {
+    return await api.put(`${URL_TUTORS}/${id}`, tutor);
+}
+
+export async function updateTutorPhoto(id: number, photo: File) {
+    const formData = new FormData();
+    formData.append('id', id.toString());
+    formData.append('foto', photo);
+    const { data } =  await api.post(`${URL_TUTORS}/${id}/fotos`, formData);
+    return data as Photo;
+}
+
+export async function removeTutorPhoto({ photoId, tutorId }: { tutorId: number, photoId: number }) {
+    return await api.delete(`${URL_TUTORS}/${tutorId}/fotos/${photoId}`);
+}
+
+export async function deleteTutor(id: number) {
+    return await api.delete(`${URL_TUTORS}/${id}`);
 }
