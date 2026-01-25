@@ -1,6 +1,7 @@
 import { Avatar } from "primereact/avatar"
 import { useRef, useState, useEffect } from "react"
 import { Button } from "primereact/button"
+import { useToast } from "@/contexts/ToastContext"
 
 interface AvatarEditProps {
     onImageUpload?: (file: File | null) => void
@@ -10,6 +11,7 @@ interface AvatarEditProps {
 }
 
 export default function AvatarEdit({ onImageUpload, currentImageUrl, size = "xlarge", loading = false }: AvatarEditProps) {
+    const { showAlert } = useToast();
     const fileInputRef = useRef<HTMLInputElement>(null)
     const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null)
 
@@ -18,9 +20,9 @@ export default function AvatarEdit({ onImageUpload, currentImageUrl, size = "xla
     }, [currentImageUrl])
 
     const handleClick = () => {
-        console.log(currentImageUrl)
-        if(currentImageUrl){
-            return
+        // Não permite upload se já houver uma imagem
+        if (currentImageUrl || previewUrl) {
+            return showAlert("Remova a imagem atual para carregar uma nova.")
         }
         fileInputRef.current?.click()
     }
@@ -58,14 +60,14 @@ export default function AvatarEdit({ onImageUpload, currentImageUrl, size = "xla
                 <div className="relative cursor-pointer" onClick={handleClick}>
                     <Avatar
                         shape="circle"
-                        className={`p-overlay-badge border-2 border-gray-300 ${!currentImageUrl ? "border-dashed hover:border-gray-400 transition-colors" : ""}`}
+                        className={`p-overlay-badge border-2 ${currentImageUrl || previewUrl ? "border-gray-300" : "border-gray-300 border-dashed hover:border-gray-400 transition-colors cursor-pointer"}`}
 
                         icon={previewUrl ? undefined : "pi pi-user"}
                         size={size}
                         image={previewUrl || undefined}
                     />
 
-                    {!previewUrl && (
+                    {!previewUrl && !currentImageUrl && (
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-black bg-opacity-50 rounded-full">
                             <i className="pi pi-camera text-white text-xl"></i>
                         </div>
