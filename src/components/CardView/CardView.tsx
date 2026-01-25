@@ -1,6 +1,7 @@
 import { Avatar } from "primereact/avatar"
 import { Button } from "primereact/button"
 import type { ReactNode } from "react"
+import { PawPrint } from 'lucide-react';
 
 interface CardViewProps {
     avatar: string
@@ -9,10 +10,22 @@ interface CardViewProps {
     content?: ReactNode
     onEdit?: () => void
     onDelete?: () => void
+    onPetLink?: () => void
     loadingDelete?: boolean
+    showPetLinkButton?: boolean
 }
 
-export function CardView({ avatar, title, subtitle, content, onEdit, onDelete, loadingDelete }: CardViewProps) {
+export function CardView({ 
+    avatar, 
+    title, 
+    subtitle, 
+    content, 
+    onEdit, 
+    onDelete, 
+    onPetLink, 
+    loadingDelete, 
+    showPetLinkButton = false 
+}: CardViewProps) {
 
     const handleEdit = () => {
         onEdit?.()
@@ -20,6 +33,10 @@ export function CardView({ avatar, title, subtitle, content, onEdit, onDelete, l
 
     const handleDelete = () => {
         onDelete?.()
+    }
+
+    const handlePetLink = () => {
+        onPetLink?.()
     }
 
     return (
@@ -37,8 +54,14 @@ export function CardView({ avatar, title, subtitle, content, onEdit, onDelete, l
                 )}
             </div>
             <div className="flex justify-end gap-2 p-2">
-                <Button onClick={handleEdit} icon="pi pi-pencil" className="w-full" severity="info" size="small" text disabled={loadingDelete} />
-                <Button onClick={handleDelete} icon="pi pi-trash" className="w-full" severity="danger" size="small" text loading={loadingDelete} />
+                {showPetLinkButton && (
+                    <Button onClick={handlePetLink} tooltip="Vincular Pet" severity="info" size="small" text disabled={loadingDelete} >
+                        <PawPrint size={18} />
+                    </Button>
+                )}
+
+                <Button onClick={handleEdit} icon="pi pi-pencil" tooltip="Editar" className="w-full" severity="info" size="small" text disabled={loadingDelete} />
+                <Button onClick={handleDelete} icon="pi pi-trash" tooltip="Excluir" className="w-full" severity="danger" size="small" text loading={loadingDelete} />
             </div>
         </div>
     )
