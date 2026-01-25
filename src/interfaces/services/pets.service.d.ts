@@ -8,4 +8,11 @@ export interface PetsRequest {
     size?: number
 }
 
+export interface CreatePetProps {
+    nome: string
+    raca: string
+    idade: number
+}
+
 export interface PetsResponse extends Pagination<Pet> {}
+
