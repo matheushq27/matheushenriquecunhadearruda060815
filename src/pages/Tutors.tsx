@@ -15,6 +15,7 @@ import { useErrorHandler } from "@/hooks/useHandleError";
 import { useToast } from "@/contexts/ToastContext";
 import { NoRecordsFound } from "@/components/NoRecordsFound";
 import type { Tutor } from "@/interfaces/entities/tutors";
+import PetLinkDialog from "@/components/PetLinkDialog/PetLinkDialog";
 
 export default function Tutors() {
 
@@ -24,6 +25,7 @@ export default function Tutors() {
     const [indexDelete, setIndexDelete] = useState<number | null>(null);
     const [loadingTutors, setLoadingTutors] = useState(true);
     const { tutors, setCurrentTutor } = useTutorsStore((state) => state);
+    const [openPetLinkDialog, setOpenPetLinkDialog] = useState(false);
     const { onPageChange, perPageOptions, setPagination, nextPage, total, setNextPage, first, size } = usePagination()
 
     const getTutors = async () => {
@@ -127,8 +129,10 @@ export default function Tutors() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {tutors.map((tutor, index) => (
                             <CardView
+                                showPetLinkButton={true}
                                 onEdit={() => handleEditTutor(tutor)}
                                 onDelete={() => confirmDelete(index)}
+                                onPetLink={() => setOpenPetLinkDialog(true)}
                                 loadingDelete={indexDelete === index}
                                 key={tutor.id}
                                 avatar={tutor.foto?.url}
@@ -151,6 +155,7 @@ export default function Tutors() {
             <div className="card">
                 <Paginator className="mt-4" first={first} rows={size} totalRecords={total} rowsPerPageOptions={perPageOptions} onPageChange={onPageChange} />
             </div>
+            <PetLinkDialog isOpen={openPetLinkDialog} onClose={() => setOpenPetLinkDialog(false)} />
         </div>
     );
 }
