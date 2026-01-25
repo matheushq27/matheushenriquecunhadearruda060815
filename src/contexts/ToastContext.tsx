@@ -4,6 +4,7 @@ import { Toast } from "primereact/toast";
 
 type ToastContextType = {
   showSuccess: (message: string) => void;
+  showAlert: (message: string) => void;
   showError: (message: string) => void;
 };
 
@@ -20,6 +21,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
+  const showAlert = (message: string) => {
+    toastRef.current?.show({
+      severity: "warn",
+      summary: "Atenção",
+      detail: message,
+    });
+  };
+
   const showError = (message: string) => {
     toastRef.current?.show({
       severity: "error",
@@ -29,7 +38,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <ToastContext.Provider value={{ showSuccess, showError }}>
+    <ToastContext.Provider value={{ showSuccess, showAlert, showError }}>
       <Toast ref={toastRef} />
       {children}
     </ToastContext.Provider>
