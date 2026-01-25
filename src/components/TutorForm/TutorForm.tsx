@@ -3,6 +3,7 @@ import { InputText } from 'primereact/inputtext'
 import { useForm, Controller } from 'react-hook-form'
 import { FormField } from '../FormField'
 import { InputMask } from 'primereact/inputmask';
+import { ProgressBar } from 'primereact/progressbar';
 import type { CreateTutorProps } from '@/interfaces/services/tutors.service';
 import { validateCPF } from '@/helpers/Validators';
 import { useEffect, useState } from 'react';
@@ -22,6 +23,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loadingCreateTutor, setLoadingCreateTutor] = useState(false);
     const [loadingRemoveTutorPhoto, setLoadingRemoveTutorPhoto] = useState(false);
+    const [loadingGetTutor, setLoadingGetTutor] = useState(false);
     const { handleError } = useErrorHandler();
     const { currentTutor, setCurrentTutor, updateTutorPhoto: updateTutorPhotoStore } = useTutorsStore((state) => state);
     const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
@@ -66,6 +68,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
     }
 
     const getTutor = async (id: number) => {
+        setLoadingGetTutor(true);
         try {
             const response = await tutorsService.getTutor(id);
             console.log(response);
@@ -81,6 +84,8 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
         } catch (error) {
             console.log(error);
             handleError(error);
+        } finally {
+            setLoadingGetTutor(false);
         }
     }
 
@@ -159,8 +164,14 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                     onSubmit={handleSubmit(handleSubmitForm)}
                     className="flex flex-col gap-4"
                 >
+                    {loadingGetTutor && (
+                        <div className="mb-4">
+                            <ProgressBar mode="indeterminate" style={{ height: '4px' }} />
+                            <p className="text-sm text-gray-600 mt-2 text-center">Carregando dados do tutor...</p>
+                        </div>
+                    )}
                     <div className='h-96 xl:h-auto overflow-y-auto'>
-                        <AvatarEdit currentImageUrl={currentImageUrl} onImageUpload={onImageUpload} loading={loadingRemoveTutorPhoto} />
+                        <AvatarEdit currentImageUrl={currentImageUrl} onImageUpload={onImageUpload} loading={loadingRemoveTutorPhoto || loadingGetTutor} />
                         {/* NOME */}
                         <div className="flex flex-col gap-1 mt-5 mb-3">
                             <FormField label="Nome" inputId="nome" errorMessage={errors.nome} required>
@@ -174,6 +185,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                                             id="nome"
                                             invalid={!!errors.nome}
                                             className="w-full"
+                                            disabled={loadingGetTutor}
                                         />
                                     )}
                                 />
@@ -200,6 +212,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                                                 id="email"
                                                 type="email"
                                                 invalid={!!errors.email}
+                                                disabled={loadingGetTutor}
                                             />
                                         </>
                                     )}
@@ -221,6 +234,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                                             placeholder="(99) 99999-9999"
                                             invalid={!!errors.telefone}
                                             mask="(99) 99999-9999"
+                                            disabled={loadingGetTutor}
                                         />
                                     )}
                                 />
@@ -239,6 +253,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                                             {...field}
                                             id="endereco"
                                             invalid={!!errors.endereco}
+                                            disabled={loadingGetTutor}
                                         />
                                     )}
                                 />
@@ -267,6 +282,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                                             maxLength={11}
                                             invalid={!!errors.cpf}
                                             mask="999.999.999-99"
+                                            disabled={loadingGetTutor}
                                         />
                                     )}
                                 />
@@ -279,6 +295,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                         type="submit"
                         label="Salvar Tutor"
                         loading={loadingCreateTutor}
+                        disabled={loadingGetTutor}
                     />
                 </form >
             </DialogForm>
