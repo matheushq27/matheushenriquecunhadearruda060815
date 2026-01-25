@@ -94,7 +94,6 @@ export default function Tutors() {
 
     const handleEditTutor = (currentTutor: Tutor) => {
         setCurrentTutor(currentTutor)
-        console.log('currentTutor', currentTutor)
     }
 
     const handleFilter = () => {
