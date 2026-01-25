@@ -57,7 +57,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
     const createTutor = async (data: CreateTutorFormData) => {
         setLoadingCreateTutor(true);
         try {
-            const response = await tutorsService.createTutor(data);
+            await tutorsService.createTutor(data);
             if (afterCreating) {
                 afterCreating();
             }
