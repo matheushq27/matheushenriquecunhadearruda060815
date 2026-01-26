@@ -31,9 +31,6 @@ export function Sidebar() {
             label: 'Pets',
             icon: <PawPrint  size={18} className='mr-1'/>,
             command: () => navigate('/pets'),
-        },
-        {
-            separator: true
         }
     ]
 
