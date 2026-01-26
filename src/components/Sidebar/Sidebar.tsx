@@ -1,10 +1,11 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Menu } from 'primereact/menu';
 import Logo from '@/assets/logo.svg'
 import { PawPrint, Users } from 'lucide-react';
 
 export function Sidebar() {
     const navigate = useNavigate()
+    const location = useLocation()
 
     const items = [
         {
@@ -26,11 +27,13 @@ export function Sidebar() {
             label: 'Tutores',
             icon: <Users  size={18} className='mr-1'/>,
             command: () => navigate('/tutors'),
+            className: location.pathname === '/tutors' ? 'bg-gray-100' : ''
         },
         {
             label: 'Pets',
             icon: <PawPrint  size={18} className='mr-1'/>,
             command: () => navigate('/pets'),
+            className: location.pathname === '/pets' ? 'bg-gray-100' : ''
         }
     ]
 
