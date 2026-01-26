@@ -78,7 +78,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
 
         setLoadingUpdateTutor(true);
         try {
-            const response = await tutorsService.updateTutor(currentTutor.id, data);
+            await tutorsService.updateTutor(currentTutor.id, data);
             if (afterCreating) {
                 afterCreating();
             }
@@ -131,7 +131,6 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
             return handleError({}, 'Erro ao remover foto do tutor');
         }
         setLoadingRemoveTutorPhoto(true);
-        console.log(currentTutor.foto?.id)
         try {
             await tutorsService.removeTutorPhoto({ tutorId: currentTutor.id, photoId: currentTutor.foto?.id || 0 });
             setCurrentImageUrl("");
@@ -199,7 +198,9 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                         </div>
                     )}
                     <div className='h-96 xl:h-auto overflow-y-auto'>
-                        <AvatarEdit currentImageUrl={currentImageUrl} onImageUpload={onImageUpload} loading={loadingRemoveTutorPhoto || loadingGetTutor} />
+                        {currentTutor && (
+                            <AvatarEdit currentImageUrl={currentTutor?.foto?.url} onImageUpload={onImageUpload} loading={loadingRemoveTutorPhoto || loadingGetTutor} />
+                        )}
                         {/* NOME */}
                         <div className="flex flex-col gap-1 mt-5 mb-3">
                             <FormField label="Nome" inputId="nome" errorMessage={errors.nome} required>
