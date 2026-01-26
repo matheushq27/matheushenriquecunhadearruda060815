@@ -98,7 +98,7 @@ export default function PetForm({ afterCreating }: { afterCreating?: () => void 
             reset({
                 name: response.nome || '',
                 breed: response.raca || '',
-                age: response.idade || 0,
+                age: response.idade !== undefined && response.idade !== null ? Number(response.idade) : 0,
             });
             setCurrentImageUrl(response.foto?.url || "");
         } catch (error) {
@@ -185,8 +185,9 @@ export default function PetForm({ afterCreating }: { afterCreating?: () => void 
                             }}
                             render={({ field }) => (
                                 <InputNumber
-                                    {...field}
                                     id="age"
+                                    value={field.value || 0}
+                                    onValueChange={(e) => field.onChange(e.value)}
                                     invalid={!!errors.age}
                                     placeholder="Ex: 3"
                                 />
