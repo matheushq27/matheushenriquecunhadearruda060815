@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Menu } from 'primereact/menu';
-import Logo from '@/assets/logo.svg'
+import Logo from '@/assets/tutorpet-logo-2.svg'
 import { PawPrint, Users } from 'lucide-react';
 
 export function Sidebar() {
@@ -11,11 +11,8 @@ export function Sidebar() {
         {
             template: () => {
                 return (
-                    <span className="inline-flex align-items-center gap-1 px-2 py-2">
-                        <img src={Logo} alt="logo" className="w-10 h-10" />
-                        <span className="font-medium text-xl font-semibold">
-                            TUTOR<span className="text-primary">PET</span>
-                        </span>
+                    <span className="inline-flex justify-center align-items-center gap-1 px-2 py-2 text-center w-full">
+                        <img src={Logo} alt="logo" className="w-24" />
                     </span>
                 );
             }
