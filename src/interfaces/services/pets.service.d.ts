@@ -9,10 +9,12 @@ export interface PetsRequest {
 }
 
 export interface CreatePetProps {
-    nome: string
-    raca: string
-    idade: number
+    name: string
+    breed: string
+    age: number
 }
+
+export interface CreatePetResponse extends Pet {}
 
 export interface PetsResponse extends Pagination<Pet> {}
 

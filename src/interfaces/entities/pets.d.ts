@@ -5,6 +5,6 @@ export interface Pet {
     nome: string;
     raca: string;
     idade: number;
-    foto: Photo;
+    foto: Photo | null;
 }
 
