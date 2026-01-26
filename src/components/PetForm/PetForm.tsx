@@ -56,7 +56,7 @@ export default function PetForm({ afterCreating }: { afterCreating?: () => void 
     const createPet = async (data: CreatePetFormData) => {
         setLoadingCreatePet(true);
         try {
-            const response = await petsService.createPet(data);
+            await petsService.createPet(data);
             if (afterCreating) {
                 afterCreating();
             }
@@ -77,7 +77,7 @@ export default function PetForm({ afterCreating }: { afterCreating?: () => void 
 
         setLoadingUpdatePet(true);
         try {
-            const response = await petsService.updatePet(currentPet.id, data);
+            await petsService.updatePet(currentPet.id, data);
             if (afterCreating) {
                 afterCreating();
             }
@@ -105,6 +105,45 @@ export default function PetForm({ afterCreating }: { afterCreating?: () => void 
             handleError(error, 'Erro ao buscar pet');
         } finally {
             setLoadingGetPet(false);
+        }
+    };
+
+    const updatePetPhoto = async (photo: File) => {
+        if (!currentPet) {
+            return handleError({}, 'Erro ao atualizar foto do pet');
+        }
+
+        try {
+            const resp = await petsService.updatePetPhoto(currentPet.id, photo);
+            updatePetPhotoStore(currentPet.id, resp);
+            showSuccess('Foto do pet atualizada com sucesso');
+        } catch (error) {
+            handleError(error, 'Erro ao atualizar foto do pet');
+        }
+    };
+
+    const removePetPhoto = async () => {
+        if (!currentPet) {
+            return handleError({}, 'Erro ao remover foto do pet');
+        }
+        setLoadingRemovePetPhoto(true);
+        try {
+            await petsService.removePetPhoto({ petId: currentPet.id, photoId: currentPet.foto?.id || 0 });
+            setCurrentImageUrl("");
+            showSuccess('Foto removida com sucesso');
+            updatePetPhotoStore(currentPet.id, null);
+        } catch (error) {
+            handleError(error, 'Erro ao remover foto do pet');
+        } finally {
+            setLoadingRemovePetPhoto(false);
+        }
+    };
+
+    const onImageUpload = (photo: File | null) => {
+        if (photo) {
+            updatePetPhoto(photo);
+        } else {
+            removePetPhoto();
         }
     };
 
@@ -142,7 +181,7 @@ export default function PetForm({ afterCreating }: { afterCreating?: () => void 
             >
                 <form className="flex flex-col gap-4" onSubmit={handleSubmit(handleSubmitForm)}>
                     {currentPet && (
-                        <AvatarEdit currentImageUrl={currentPet?.foto?.url || ""} onImageUpload={(e) => console.log(e)} loading={loadingGetPet} />
+                        <AvatarEdit currentImageUrl={currentPet?.foto?.url || ""} onImageUpload={onImageUpload} loading={loadingRemovePetPhoto || loadingGetPet} />
                     )}
                     <FormField label="Nome" inputId="nome" errorMessage={errors.name}>
                         <Controller
