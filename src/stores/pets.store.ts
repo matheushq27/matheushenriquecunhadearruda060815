@@ -1,4 +1,5 @@
 import type { Pet } from '@/interfaces/entities/pets'
+import type { Photo } from '@/interfaces/entities/tutors'
 import type { Pagination } from '@/interfaces/utils/Pagination'
 import { create } from 'zustand'
 
@@ -13,6 +14,7 @@ export interface PetsState {
     setLoading: (loading: boolean) => void
     clearPets: () => void
     removePet: (petId: number) => void
+    updatePetPhoto: (petId: number, foto: Photo | null) => void
 }
 
 export const usePetsStore = create<PetsState>()((set) => ({
@@ -49,5 +51,15 @@ export const usePetsStore = create<PetsState>()((set) => ({
         set((state) => ({
             pets: state.pets.filter(pet => pet.id !== petId),
             currentPet: state.currentPet?.id === petId ? null : state.currentPet,
+        })),
+
+    updatePetPhoto: (petId, foto) =>
+        set((state) => ({
+            pets: state.pets.map(pet =>
+                pet.id === petId ? { ...pet, foto } : pet
+            ),
+            currentPet: state.currentPet?.id === petId 
+                ? { ...state.currentPet, foto } 
+                : state.currentPet,
         })),
 }))

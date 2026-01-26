@@ -57,5 +57,8 @@ export const useTutorsStore = create<TutorsState>()((set) => ({
             tutors: state.tutors.map(tutor =>
                 tutor.id === tutorId ? { ...tutor, foto } : tutor
             ),
+            currentTutor: state.currentTutor?.id === tutorId 
+                ? { ...state.currentTutor, foto } 
+                : state.currentTutor,
         })),
 }))
