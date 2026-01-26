@@ -5,6 +5,7 @@ import { CardView } from "@/components/CardView";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { FormField } from "@/components/FormField";
+import PetForm from "@/components/PetForm/PetForm";
 import { SectionLoading } from "@/components/SectionLoading";
 import { Paginator } from 'primereact/paginator';
 import { usePagination } from "@/hooks/usePagination";
@@ -74,8 +75,7 @@ export default function Pets() {
 
     const deletePet = async (id: number) => {
         try {
-            // TODO: Implementar serviço de delete quando disponível
-            // await petsService.deletePet(id);
+            await petsService.deletePet(id);
             getPets()
             showSuccess('Pet excluído com sucesso');
         } catch (error) {
@@ -122,8 +122,7 @@ export default function Pets() {
                 </FormField>
                 <div>
                     <Button label="Filtrar" icon="pi pi-filter" onClick={handleFilter} className="!mr-2" disabled={loadingPets} />
-                    {/* TODO: Implementar PetForm quando disponível */}
-                    {/* <PetForm afterCreating={getPets} /> */}
+                    <PetForm afterCreating={getPets} />
                 </div>
             </div>
             <SectionLoading loading={loadingPets} />
@@ -136,7 +135,7 @@ export default function Pets() {
                                 onDelete={() => confirmDelete(index)}
                                 loadingDelete={indexDelete === index}
                                 key={pet.id}
-                                avatar={pet.foto?.url}
+                                avatar={pet.foto?.url || ''}
                                 title={pet.nome}
                                 subtitle={`Raça: ${pet.raca}`}
                                 content={
