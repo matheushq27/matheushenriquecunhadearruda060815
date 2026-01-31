@@ -34,6 +34,7 @@ export const usePagination = () => {
         first,
         onPageChange,
         setNextPage,
-        setPagination
+        setPagination,
+        setSize
     }
 }
