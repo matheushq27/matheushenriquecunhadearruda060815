@@ -49,3 +49,7 @@ export async function deleteTutor(id: number) {
 export async function linkingTutorToPet({ tutorId, petId }: { tutorId: number, petId: number }) {
     return await api.post(`${URL_TUTORS}/${tutorId}/pets/${petId}`);
 }
+
+export async function unlinkingTutorToPet({ tutorId, petId }: { tutorId: number, petId: number }) {
+    return await api.delete(`${URL_TUTORS}/${tutorId}/pets/${petId}`);
+}

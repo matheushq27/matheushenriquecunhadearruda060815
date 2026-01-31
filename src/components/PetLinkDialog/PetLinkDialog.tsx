@@ -8,6 +8,7 @@ import type { Pet } from '@/interfaces/entities/pets';
 import { PetFilters } from '../PetFilters';
 import * as tutorsService from "@/services/tutors/tutors.service";
 import type { Tutor } from '@/interfaces/entities/tutors';
+import { useErrorHandler } from '@/hooks/useHandleError';
 
 export default function PetLinkDialog({
     isOpen,
@@ -19,6 +20,7 @@ export default function PetLinkDialog({
     onClose: () => void;
 }) {
 
+    const { handleError } = useErrorHandler();
     const [selectedPets, setSelectedPets] = useState<any[]>([]);
     const [currentTutor, setCurrentTutor] = useState<Tutor | null>(null)
 
@@ -81,6 +83,36 @@ export default function PetLinkDialog({
         }
     }
 
+    const linkingTutorToPet = async (petId: number) => {
+        setLoadingPets(true)
+        try {
+            await tutorsService.linkingTutorToPet({ tutorId, petId })
+        } catch (error) {
+            handleError(error)
+        } finally {
+            setLoadingPets(false)
+        }
+    }
+
+    const unlinkingTutorToPet = async (petId: number) => {
+        setLoadingPets(true)
+        try {
+            await tutorsService.unlinkingTutorToPet({ tutorId, petId })
+        } catch (error) {
+            handleError(error)
+        } finally {
+            setLoadingPets(false)
+        }
+    }
+
+    const onRowSelect = (petId: number, check: boolean) => {
+        if (check) {
+            linkingTutorToPet(petId)
+        } else {
+            unlinkingTutorToPet(petId)
+        }
+    }
+
     const onInit = async () => {
         await getTutor(tutorId)
         await getPets()
@@ -135,6 +167,8 @@ export default function PetLinkDialog({
                     pageCount: total,
                 })}
                 onSelectionChange={(e) => setSelectedPets(e.value)}
+                onRowSelect={(e: any) => onRowSelect(e.data.id, e.originalEvent.checked)}
+                onRowUnselect={(e: any) => onRowSelect(e.data.id, e.originalEvent.checked)}
                 className="pet-link-table"
             >
                 <Column field="foto" header="Foto"
