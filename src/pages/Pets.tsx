@@ -2,57 +2,31 @@ import * as petsService from "@/services/pets/pets.service";
 import { useEffect, useState } from "react";
 import { usePetsStore } from "@/stores/pets.store";
 import { CardView } from "@/components/CardView";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { FormField } from "@/components/FormField";
 import PetForm from "@/components/PetForm/PetForm";
 import { SectionLoading } from "@/components/SectionLoading";
 import { Paginator } from 'primereact/paginator';
-import { usePagination } from "@/hooks/usePagination";
 import { confirmDialog } from 'primereact/confirmdialog';
 import { useErrorHandler } from "@/hooks/useHandleError";
 import { useToast } from "@/contexts/ToastContext";
 import { NoRecordsFound } from "@/components/NoRecordsFound";
 import type { Pet } from "@/interfaces/entities/pets";
+import { usePets } from "@/hooks/usePets";
+import { PetFilters } from "@/components/PetFilters";
 
 export default function Pets() {
 
     const { showSuccess } = useToast();
     const { handleError } = useErrorHandler();
-    const [name, setName] = useState('');
-    const [breed, setBreed] = useState('');
     const [indexDelete, setIndexDelete] = useState<number | null>(null);
-    const [loadingPets, setLoadingPets] = useState(true);
     const { pets, setCurrentPet } = usePetsStore((state) => state);
-    const { onPageChange, perPageOptions, setPagination, nextPage, total, setNextPage, first, size } = usePagination()
 
-    const getPets = async () => {
-        setLoadingPets(true);
-        try {
-            const response = await petsService.getPets({
-                name: name,
-                breed: breed,
-                page: nextPage,
-                size: size,
-            });
-
-            usePetsStore.setState({
-                pets: response.content,
-                pagination: response,
-            })
-
-            setPagination({
-                page: response.page,
-                size: response.size,
-                total: response.total,
-                pageCount: response.pageCount,
-            })
-        } catch (error) {
-            console.log(error);
-        } finally {
-            setLoadingPets(false);
-        }
-    }
+    const {
+        pets: petsFromHook,
+        getPets, name, setName, breed,
+        setBreed, loadingPets, onPageChange,
+        perPageOptions, nextPage, total,
+        setNextPage, first, size
+    } = usePets();
 
     const confirmDelete = (index: number) => {
         const pet = pets[index];
@@ -110,21 +84,31 @@ export default function Pets() {
         getPets();
     }, [nextPage, size]);
 
+    useEffect(() => {
+        usePetsStore.setState({
+            pets: petsFromHook || [],
+            pagination: {
+                page: nextPage,
+                size: size,
+                total: total,
+                pageCount: first,
+                content: petsFromHook || [],
+            },
+        })
+    }, [petsFromHook]);
+
     return (
         <div>
             <h1 className="text-lg mb-5">Pets</h1>
-            <div className="flex gap-2 items-end mb-10">
-                <FormField label="Nome" inputId="name">
-                    <InputText id="name" placeholder="Ex: Rex" value={name} onChange={(e) => setName(e.target.value)} disabled={loadingPets} />
-                </FormField>
-                <FormField label="Raça" inputId="breed">
-                    <InputText id="breed" placeholder="Ex: Golden Retriever" value={breed} onChange={(e) => setBreed(e.target.value)} disabled={loadingPets} />
-                </FormField>
-                <div>
-                    <Button label="Filtrar" icon="pi pi-filter" onClick={handleFilter} className="!mr-2" disabled={loadingPets} />
-                    <PetForm afterCreating={getPets} />
-                </div>
-            </div>
+            <PetFilters
+                name={name}
+                breed={breed}
+                loadingPets={loadingPets}
+                handleFilter={handleFilter}
+                setName={setName}
+                setBreed={setBreed}
+                afterFilterButton={<PetForm afterCreating={getPets} />}
+            />
             <SectionLoading loading={loadingPets} />
             {!loadingPets && (
                 pets.length > 0 ? (
