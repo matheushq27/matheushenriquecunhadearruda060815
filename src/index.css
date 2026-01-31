@@ -3,3 +3,7 @@
 .p-paginator .p-dropdown {
     width: auto !important;
 }
+
+.pet-link-table th .p-checkbox {
+    display: none !important;
+}

@@ -8,7 +8,6 @@ import type { Pet } from '@/interfaces/entities/pets';
 import { PetFilters } from '../PetFilters';
 import * as tutorsService from "@/services/tutors/tutors.service";
 import type { Tutor } from '@/interfaces/entities/tutors';
-import { Checkbox } from 'primereact/checkbox';
 
 export default function PetLinkDialog({
     isOpen,
@@ -21,9 +20,11 @@ export default function PetLinkDialog({
 }) {
 
     const [selectedPets, setSelectedPets] = useState<any[]>([]);
-    const [selectedPetsIds, setSelectedPetsIds] = useState<number[]>([]);
-
     const [currentTutor, setCurrentTutor] = useState<Tutor | null>(null)
+
+    const objColor = {
+        color: '#000'
+    }
 
     const {
         pets,
@@ -85,10 +86,6 @@ export default function PetLinkDialog({
         await getPets()
     }
 
-    const onSelectAllChange = () => {
-        setSelectedPets(pets)
-    }
-
     useEffect(() => {
         if (isOpen) {
             onInit()
@@ -102,10 +99,6 @@ export default function PetLinkDialog({
     useEffect(() => {
         getPets();
     }, [nextPage, size]);
-
-    useEffect(() => {
-        setSelectedPetsIds(selectedPets.map((item) => item.id))
-    }, [selectedPets]);
 
     return (
         <Dialog
@@ -142,18 +135,15 @@ export default function PetLinkDialog({
                     pageCount: total,
                 })}
                 onSelectionChange={(e) => setSelectedPets(e.value)}
-                onSelectAllChange={(e) => {
-                    console.log(e)
-                    onSelectAllChange()
-                }}
+                className="pet-link-table"
             >
                 <Column field="foto" header="Foto"
                     style={{ width: '4rem' }}
                     body={imageBodyTemplate}
                 />
-                <Column field="nome" header="Name"></Column>
-                <Column field="idade" header="Idade"></Column>
-                <Column field="raca" header="Raca"></Column>
+                <Column field="nome" header="Name" bodyStyle={objColor}></Column>
+                <Column field="idade" header="Idade" bodyStyle={objColor}></Column>
+                <Column field="raca" header="Raca" bodyStyle={objColor}></Column>
                 <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} />
             </DataTable>
         </Dialog>
