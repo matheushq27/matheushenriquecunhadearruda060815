@@ -22,6 +22,7 @@ export default function Tutors() {
     const { showSuccess } = useToast();
     const { handleError } = useErrorHandler();
     const [name, setName] = useState('');
+    const [tutorId, setTutorId] = useState(0);
     const [indexDelete, setIndexDelete] = useState<number | null>(null);
     const [loadingTutors, setLoadingTutors] = useState(true);
     const { tutors, setCurrentTutor } = useTutorsStore((state) => state);
@@ -132,7 +133,10 @@ export default function Tutors() {
                                 showPetLinkButton={true}
                                 onEdit={() => handleEditTutor(tutor)}
                                 onDelete={() => confirmDelete(index)}
-                                onPetLink={() => setOpenPetLinkDialog(true)}
+                                onPetLink={() => {
+                                    setTutorId(tutor.id || 0);
+                                    setOpenPetLinkDialog(true);
+                                }}
                                 loadingDelete={indexDelete === index}
                                 key={tutor.id}
                                 avatar={tutor.foto?.url}
@@ -155,7 +159,7 @@ export default function Tutors() {
             <div className="card">
                 <Paginator className="mt-4" first={first} rows={size} totalRecords={total} rowsPerPageOptions={perPageOptions} onPageChange={onPageChange} />
             </div>
-            <PetLinkDialog isOpen={openPetLinkDialog} onClose={() => setOpenPetLinkDialog(false)} />
+            <PetLinkDialog tutorId={tutorId} isOpen={openPetLinkDialog} onClose={() => setOpenPetLinkDialog(false)} />
         </div>
     );
 }
