@@ -9,6 +9,7 @@ import { PetFilters } from '../PetFilters';
 import * as tutorsService from "@/services/tutors/tutors.service";
 import type { Tutor } from '@/interfaces/entities/tutors';
 import { useErrorHandler } from '@/hooks/useHandleError';
+import { useToast } from '@/contexts/ToastContext';
 
 export default function PetLinkDialog({
     isOpen,
@@ -23,6 +24,7 @@ export default function PetLinkDialog({
     const { handleError } = useErrorHandler();
     const [selectedPets, setSelectedPets] = useState<any[]>([]);
     const [, setCurrentTutor] = useState<Tutor | null>(null)
+    const {showSuccess} = useToast()
 
     const objColor = {
         color: '#000'
@@ -87,6 +89,7 @@ export default function PetLinkDialog({
         setLoadingPets(true)
         try {
             await tutorsService.linkingTutorToPet({ tutorId, petId })
+            showSuccess('Pet vinculado')
         } catch (error) {
             handleError(error)
         } finally {
@@ -98,6 +101,7 @@ export default function PetLinkDialog({
         setLoadingPets(true)
         try {
             await tutorsService.unlinkingTutorToPet({ tutorId, petId })
+            showSuccess('Pet desvinculado')
         } catch (error) {
             handleError(error)
         } finally {
