@@ -142,7 +142,7 @@ export default function PetLinkDialog({
             visible={isOpen}
             onHide={onClose}
             draggable={false}
-            className='h-[80%]'
+            className='H-[90%] md:h-[80%] w-[90%] md:w-auto'
         >
             <PetFilters
                 name={name}

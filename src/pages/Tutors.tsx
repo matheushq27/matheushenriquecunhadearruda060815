@@ -115,11 +115,11 @@ export default function Tutors() {
     return (
         <div>
             <h1 className="text-lg mb-5">Tutores</h1>
-            <div className="flex gap-2 items-end mb-10">
+            <div className="flex flex-col sm:flex-row gap-2 sm:items-end mb-10">
                 <FormField label="Nome" inputId="name">
                     <InputText id="name" placeholder="Ex: João da Silva" value={name} onChange={(e) => setName(e.target.value)} disabled={loadingTutors} />
                 </FormField>
-                <div>
+                <div className="flex gap-2">
                     <Button label="Filtrar" icon="pi pi-filter" onClick={handleFilter} className="!mr-2" disabled={loadingTutors} />
                     <TutorForm afterCreating={getTutors} />
                 </div>
@@ -127,7 +127,7 @@ export default function Tutors() {
             <SectionLoading loading={loadingTutors} />
             {!loadingTutors && (
                 tutors.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {tutors.map((tutor, index) => (
                             <CardView
                                 showPetLinkButton={true}

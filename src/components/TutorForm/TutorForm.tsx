@@ -109,7 +109,6 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                 cpf: response.cpf ? response.cpf.toString() : '',
             })
         } catch (error) {
-            console.log(error);
             handleError(error);
         } finally {
             setLoadingGetTutor(false);

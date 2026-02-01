@@ -4,6 +4,7 @@ import { Sidebar } from 'primereact/sidebar'
 import { PanelMenu } from 'primereact/panelmenu'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth.store'
+import { PawPrint, Users } from 'lucide-react';
 
 export function Header() {
     const [visible, setVisible] = useState(false)
@@ -12,20 +13,16 @@ export function Header() {
 
     const items = [
         {
-            label: 'Home',
-            icon: 'pi pi-home',
-            command: () => navigate('/'),
+            label: 'Tutores',
+            icon: <Users  size={18} className='mr-1'/>,
+            command: () => navigate('/tutors'),
+            className: location.pathname === '/tutors' ? 'bg-gray-100' : ''
         },
         {
-            label: 'Usuários',
-            icon: 'pi pi-users',
-            items: [
-                {
-                    label: 'Listar',
-                    icon: 'pi pi-list',
-                    command: () => navigate('/users'),
-                },
-            ],
+            label: 'Pets',
+            icon: <PawPrint  size={18} className='mr-1'/>,
+            command: () => navigate('/pets'),
+            className: location.pathname === '/pets' ? 'bg-gray-100' : ''
         },
     ]
 
@@ -36,7 +33,9 @@ export function Header() {
                     icon="pi pi-bars"
                     text
                     onClick={() => setVisible(true)}
+                    className="lg:invisible"
                 />
+                <div className="flex-1"></div>
                 <Button
                     label="Sair"
                     icon="pi pi-sign-out"

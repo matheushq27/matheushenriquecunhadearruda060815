@@ -112,7 +112,7 @@ export default function Pets() {
             <SectionLoading loading={loadingPets} />
             {!loadingPets && (
                 pets.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         {pets.map((pet, index) => (
                             <CardView
                                 onEdit={() => handleEditPet(pet)}
