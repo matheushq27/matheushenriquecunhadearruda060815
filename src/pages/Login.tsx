@@ -14,6 +14,7 @@ const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [username, setUsername] = useState('admin');
     const [password, setPassword] = useState('admin');
+    const [visiblePass, setVisiblePass] = useState(false);
     const setUser = useAuthStore((state) => state.setUser);
 
     const authenticate = async () => {
@@ -53,7 +54,25 @@ const Login = () => {
                         </FormField>
 
                         <FormField label="Senha" inputId="password1" classNameContainer="mb-5">
-                            <Password inputId="password1" value={password} feedback={false} onChange={(e) => setPassword(e.target.value)} placeholder="Sua senha" toggleMask className="w-full mb-5" inputClassName="w-full"></Password>
+                            <Password
+                                icon={(e) => {
+                                    return visiblePass ? <i onClick={() => {
+                                        e.onClick();
+                                        setVisiblePass(!visiblePass);
+                                    }} className="pi pi-eye cursor-pointer"></i> : <i onClick={() => {
+                                        e.onClick();
+                                        setVisiblePass(!visiblePass);
+                                    }} className="pi pi-eye-slash cursor-pointer"></i>
+                                }}
+                                inputId="password1"
+                                value={password}
+                                feedback={false}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Sua senha"
+                                toggleMask
+                                className="w-full mb-5"
+                                inputClassName="w-full"
+                            ></Password>
                         </FormField>
                         <div className='text-center'>
                             <Button label="Entrar" loading={isLoading} className="p-3 text-xl" onClick={handleAuthenticate}></Button>
