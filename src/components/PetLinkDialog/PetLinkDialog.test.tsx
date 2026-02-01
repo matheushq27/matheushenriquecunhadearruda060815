@@ -33,7 +33,7 @@ vi.mock('primereact/datatable', () => ({
     return (
       <div data-testid="datatable" data-loading={loading} className={className}>
         <div data-testid="selection-count">{selection?.length || 0} selecionados</div>
-        {value?.map((item: any, index: number) => (
+        {value?.map((item: any) => (
           <div key={item.id} data-testid={`row-${item.id}`}>
             <input 
               type="checkbox" 
@@ -132,7 +132,7 @@ describe('PetLinkDialog Component', () => {
   let getPetsMock: any
   let setNameMock: any
   let setBreedMock: any
-  let setLoadingPetsMock: any
+  // let setLoadingPetsMock: any
 
   const defaultProps = {
     isOpen: true,
@@ -146,15 +146,15 @@ describe('PetLinkDialog Component', () => {
     getPetsMock = vi.mocked(usePets().getPets)
     setNameMock = vi.mocked(usePets().setName)
     setBreedMock = vi.mocked(usePets().setBreed)
-    setLoadingPetsMock = vi.mocked(usePets().setLoadingPets)
+    // setLoadingPetsMock = vi.mocked(usePets().setLoadingPets)
     
     vi.mocked(tutorsService.getTutor).mockResolvedValue({
       id: 1,
       nome: 'João',
       pets: [
-        { id: 1, nome: 'Rex', raca: 'Golden Retriever', idade: 3 },
+        { id: 1, nome: 'Rex', raca: 'Golden Retriever', idade: 3, foto: { url: 'rex.jpg' } },
       ],
-    })
+    } as any)
   })
 
   it('Deve renderizar o dialog quando isOpen for true', () => {

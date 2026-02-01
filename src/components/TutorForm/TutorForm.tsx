@@ -27,7 +27,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
     const [loadingUpdateTutor, setLoadingUpdateTutor] = useState(false);
     const { handleError } = useErrorHandler();
     const { currentTutor, setCurrentTutor, updateTutorPhoto: updateTutorPhotoStore } = useTutorsStore((state) => state);
-    const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
+    const [, setCurrentImageUrl] = useState<string>("");
 
     const {
         control,

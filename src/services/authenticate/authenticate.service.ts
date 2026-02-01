@@ -1,4 +1,4 @@
-import type { AuthenticateRequest, AuthenticateResponse, RefreshTokenResponse } from "@/interfaces/services/authenticate.service";
+import type { AuthenticateRequest, AuthenticateResponse } from "@/interfaces/services/authenticate.service";
 import api from "../api";
 import axios from "axios";
 

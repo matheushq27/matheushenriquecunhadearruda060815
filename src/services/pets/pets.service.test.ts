@@ -60,7 +60,7 @@ describe('pets.service', () => {
       
       vi.mocked(api.get).mockResolvedValueOnce(mockResponse)
       
-      await getPets({ name: 'Rex', page: 0 })
+      await getPets({ name: 'Rex', page: 0 } as any)
       
       expect(api.get).toHaveBeenCalledWith('v1/pets', {
         params: { nome: 'Rex', raca: undefined, page: 0, size: 10 }
@@ -71,7 +71,7 @@ describe('pets.service', () => {
       const mockError = new Error('Erro na API')
       vi.mocked(api.get).mockRejectedValueOnce(mockError)
       
-      await expect(getPets({ page: 0 })).rejects.toThrow('Erro na API')
+      await expect(getPets({ page: 0 } as any)).rejects.toThrow('Erro na API')
     })
   })
 

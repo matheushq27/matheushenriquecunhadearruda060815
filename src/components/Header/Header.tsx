@@ -1,4 +1,3 @@
-import { Menubar } from 'primereact/menubar'
 import { Button } from 'primereact/button'
 import { useState } from 'react'
 import { Sidebar } from 'primereact/sidebar'

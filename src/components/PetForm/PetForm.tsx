@@ -24,7 +24,6 @@ export default function PetForm({ afterCreating }: { afterCreating?: () => void 
     const [loadingUpdatePet, setLoadingUpdatePet] = useState(false);
     const { handleError } = useErrorHandler();
     const { currentPet, setCurrentPet, updatePetPhoto: updatePetPhotoStore } = usePetsStore((state) => state);
-    const [currentImageUrl, setCurrentImageUrl] = useState<string>("");
 
     const {
         control,
@@ -46,7 +45,6 @@ export default function PetForm({ afterCreating }: { afterCreating?: () => void 
             age: 0,
         });
         setCurrentPet(null);
-        setCurrentImageUrl("");
     };
 
     const handleErrorForm = (error: unknown) => {
@@ -100,7 +98,6 @@ export default function PetForm({ afterCreating }: { afterCreating?: () => void 
                 breed: response.raca || '',
                 age: response.idade !== undefined && response.idade !== null ? Number(response.idade) : 0,
             });
-            setCurrentImageUrl(response.foto?.url || "");
         } catch (error) {
             handleError(error, 'Erro ao buscar pet');
         } finally {
@@ -129,7 +126,6 @@ export default function PetForm({ afterCreating }: { afterCreating?: () => void 
         setLoadingRemovePetPhoto(true);
         try {
             await petsService.removePetPhoto({ petId: currentPet.id, photoId: currentPet.foto?.id || 0 });
-            setCurrentImageUrl("");
             showSuccess('Foto removida com sucesso');
             updatePetPhotoStore(currentPet.id, null);
         } catch (error) {

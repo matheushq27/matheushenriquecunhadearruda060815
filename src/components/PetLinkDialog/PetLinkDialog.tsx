@@ -22,7 +22,7 @@ export default function PetLinkDialog({
 
     const { handleError } = useErrorHandler();
     const [selectedPets, setSelectedPets] = useState<any[]>([]);
-    const [currentTutor, setCurrentTutor] = useState<Tutor | null>(null)
+    const [, setCurrentTutor] = useState<Tutor | null>(null)
 
     const objColor = {
         color: '#000'

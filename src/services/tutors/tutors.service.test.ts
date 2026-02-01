@@ -73,7 +73,8 @@ describe('tutors.service', () => {
         nome: 'João Silva',
         email: 'joao@example.com',
         cpf: '12345678901',
-        telefone: '11999999999'
+        telefone: '11999999999',
+        endereco: 'Rua Teste, 123'
       };
 
       const mockResponse = {
@@ -110,7 +111,8 @@ describe('tutors.service', () => {
         nome: 'João Silva Atualizado',
         email: 'joao.atualizado@example.com',
         cpf: '12345678901',
-        telefone: '11888888888'
+        telefone: '11888888888',
+        endereco: 'Rua Atualizada, 456'
       };
 
       const mockResponse = {

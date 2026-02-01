@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { TutorForm } from './TutorForm'
 
 // Variável para controlar o estado do mock do useTutorsStore
-let mockCurrentTutor = null
+let mockCurrentTutor: { id: number; nome: string; foto?: { id: number; url: string } } | null = null
 let mockSetCurrentTutor = vi.fn()
 let mockUpdateTutorPhoto = vi.fn()
 
@@ -238,8 +238,7 @@ describe('TutorForm Component', () => {
         // Definir o currentTutor antes de renderizar
         mockCurrentTutor = { id: 1, nome: 'Test Tutor', foto: { id: 1, url: 'test.jpg' } }
         
-        const { rerender } = render(<TutorForm />)
-        rerender(<TutorForm />)
+        render(<TutorForm />)
         
         // O AvatarEdit só é renderizado quando o dialog está aberto
         const addButton = screen.getByTestId('button-adicionar')
@@ -251,7 +250,7 @@ describe('TutorForm Component', () => {
 
     it('Deve renderizar a barra de progresso quando loadingGetTutor for true', () => {
         // Testar estado de loading
-        const { rerender } = render(<TutorForm />)
+        render(<TutorForm />)
         
         const addButton = screen.getByTestId('button-adicionar')
         fireEvent.click(addButton)
