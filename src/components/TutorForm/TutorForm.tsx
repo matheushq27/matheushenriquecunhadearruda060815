@@ -54,6 +54,10 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
         })
     }
 
+    const messageValidateCPF = (cpf: string) =>{
+        return validateCPF(cpf) ? true : 'CPF inválido';
+    }
+
     const createTutor = async (data: CreateTutorFormData) => {
         setLoadingCreateTutor(true);
         try {
@@ -301,7 +305,7 @@ export function TutorForm({ afterCreating }: { afterCreating?: () => void }) {
                                             value: 11,
                                             message: 'CPF deve ter 11 dígitos',
                                         },
-                                        validate: validateCPF,
+                                        validate: messageValidateCPF,
                                     }}
                                     render={({ field }) => (
                                         <InputMask
