@@ -7,6 +7,7 @@ const navigateMock = vi.fn()
 
 vi.mock('react-router-dom', () => ({
   useNavigate: () => navigateMock,
+  useLocation: () => ({ pathname: '/' }),
 }))
 
 //mock do Menu do PrimeReact
