@@ -60,8 +60,8 @@ export function CardView({
                     </Button>
                 )}
 
-                <Button onClick={handleEdit} icon="pi pi-pencil" tooltip="Editar" className="w-full" severity="info" size="small" text disabled={loadingDelete} />
-                <Button onClick={handleDelete} icon="pi pi-trash" tooltip="Excluir" className="w-full" severity="danger" size="small" text loading={loadingDelete} />
+                <Button aria-label="Editar" onClick={handleEdit} icon="pi pi-pencil" tooltip="Editar" className="w-full" severity="info" size="small" text disabled={loadingDelete} />
+                <Button aria-label="Excluir" onClick={handleDelete} icon="pi pi-trash" tooltip="Excluir" className="w-full" severity="danger" size="small" text loading={loadingDelete} />
             </div>
         </div>
     )
