@@ -19,6 +19,7 @@ export default function AppRoutes() {
             <Route element={<PublicRoutes />}>
                 <Route element={<GuestLayout />}>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/health" element={<>Tutorpet Rodando</>} />
                 </Route>
             </Route>
 
