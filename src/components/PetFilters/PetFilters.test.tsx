@@ -125,8 +125,10 @@ describe('PetFilters Component', () => {
     
     const container = screen.getByTestId('formfield-name').parentElement
     expect(container).toHaveClass('flex')
+    expect(container).toHaveClass('flex-col')
+    expect(container).toHaveClass('sm:flex-row')
     expect(container).toHaveClass('gap-2')
-    expect(container).toHaveClass('items-end')
+    expect(container).toHaveClass('sm:items-end')
     expect(container).toHaveClass('mb-10')
   })
 })

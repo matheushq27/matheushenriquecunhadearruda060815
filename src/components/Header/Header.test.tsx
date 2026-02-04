@@ -82,7 +82,7 @@ describe('Header component', () => {
 
     fireEvent.click(screen.getByText('pi pi-bars'))
 
-    expect(screen.getByText('Home')).toBeInTheDocument()
-    expect(screen.getByText('Usuários')).toBeInTheDocument()
+    expect(screen.getByText('Tutores')).toBeInTheDocument()
+    expect(screen.getByText('Pets')).toBeInTheDocument()
   })
 })
