@@ -1,3 +1,6 @@
+## Matheus Henrique Cunha de Arruda
+## CPF: 060.815.061-42
+
 # Tutorpet Management System
 Sistema de gerenciamento de pets e tutores desenvolvido com React, TypeScript e Vite.
 
